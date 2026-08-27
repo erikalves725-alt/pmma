@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Simulados - Concursos Públicos</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* NAVEGAÇÃO / ABAS RESPONSIVAS */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1 1 auto;
+            text-align: center;
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--card-border);
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+            border-color: var(--accent-primary);
+        }
+
+        .tab-content {
+            display: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: #0f172a;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .toggle-selector {
+            display: flex;
+            background-color: #0f172a;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+            flex-direction: row;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            background-color: var(--accent-primary);
+            color: #ffffff;
+        }
+
+        button.btn-action {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        button.btn-action:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button.btn-danger {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button.btn-warning {
+            background-color: var(--warning);
+            color: #0f172a;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .backup-box {
+            background-color: #0f172a;
+            border: 1px dashed #38bdf8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .backup-box h3 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .backup-btns {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export, .btn-import {
+            flex: 1 1 200px;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-export { background-color: #059669; }
+        .btn-import { background-color: #d97706; }
+
+        .q-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            background-color: #334155;
+            color: #38bdf8;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-timer {
+            background-color: #0f172a;
+            color: var(--warning);
+            border: 1px solid var(--warning);
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .q-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            background-color: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        /* OPÇÕES DE RESPOSTA RESPONSIVAS */
+        .options-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-direction: row;
+        }
+
+        .btn-opt {
+            flex: 1;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            border: 2px solid var(--card-border);
+            background: #0f172a;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-opt.certo:hover {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .btn-opt.errado:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .explanation {
+            display: none;
+            background-color: #0f172a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .explanation.correct { border-left-color: var(--success); }
+        .explanation.wrong { border-left-color: var(--danger); }
+
+        /* TABELA RESPONSIVA */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-list {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            min-width: 500px;
+        }
+
+        .table-list th, .table-list td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.85rem;
+        }
+
+        .table-list th { color: var(--text-secondary); }
+
+        /* MODAL */
+        .modal-edit {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            max-width: 700px;
+            width: 100%;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* MEDIA QUERIES PARA CELULAR */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            header h1 { font-size: 1.4rem; }
+            .tab-content { padding: 15px; }
+            
+            .nav-tabs {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .options-group {
+                flex-direction: column;
+            }
+
+            .toggle-selector {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>⚡ Simulado Pro - Concursos Públicos</h1>
+        <p>Estilo Cebraspe (Certo / Errado) | Gerenciamento Completo & Integrado com Laravel</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'simulado')">📝 Simulado / Praticar</button>
+        <button class="tab-btn" onclick="switchTab(event, 'laravel')">🔄 Revisão DB (Laravel)</button>
+        <button class="tab-btn" onclick="switchTab(event, 'cadastrar')">➕ Cadastrar Questão</button>
+        <button class="tab-btn" onclick="switchTab(event, 'importar')">📥 Lote & Backup (.JSON)</button>
+        <button class="tab-btn" onclick="switchTab(event, 'erros')">📕 Caderno de Erros (<span id="count-erros">0</span>)</button>
+        <button class="tab-btn" onclick="switchTab(event, 'gerenciar')">📋 Banco (<span id="count-banco">0</span>)</button>
+    </div>
+
+    <!-- TAB 1: SIMULADO -->
+    <div id="tab-simulado" class="tab-content active">
+        <div id="simulado-setup">
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Configurar Simulado</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Matéria</label>
+                    <select id="sim-materia" onchange="popularTopicosSimulado()">
+                        <option value="TODAS">Todas as Matérias</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tópico</label>
+                    <select id="sim-topico">
+                        <option value="TODOS">Todos os Tópicos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade de Questões</label>
+                    <select id="sim-qtd">
+                        <option value="5">5 Questões</option>
+                        <option value="10" selected>10 Questões</option>
+                        <option value="15">15 Questões</option>
+                        <option value="20">20 Questões</option>
+                        <option value="120">120 Questões</option>
+                        <option value="999">Todas Disponíveis</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tempo Limite</label>
+                    <select id="sim-tempo">
+                        <option value="0">Sem Limite</option>
+                        <option value="5">5 Minutos</option>
+                        <option value="10" selected>10 Minutos</option>
+                        <option value="15">15 Minutos</option>
+                        <option value="30">30 Minutos</option>
+                        <option value="60">60 Minutos</option>
+                        <option value="210">210 Minutos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Modo de Estudo</label>
+                    <select id="sim-modo">
+                        <option value="treino">Modo Treino (Gabarito na Hora)</option>
+                        <option value="prova">Modo Prova (Resultado no Final)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 5px;">
+                <label>Regra Cebraspe (1 Erro Anula 1 Certa)</label>
+                <div class="toggle-selector">
+                    <button type="button" id="btn-cebraspe-sim" class="toggle-btn active" onclick="setRegraCebraspe(true)">
+                        🎯 Sim (Pontuação Líquida)
+                    </button>
+                    <button type="button" id="btn-cebraspe-nao" class="toggle-btn" onclick="setRegraCebraspe(false)">
+                        ❌ Não (Apenas Acertos)
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-action" style="margin-top: 10px;" onclick="iniciarSimulado()">Iniciar Simulado</button>
+        </div>
+
+        <div id="simulado-exec" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <span id="progresso-texto" style="color: var(--text-secondary); font-weight: 600;">Questão 1 de 10</span>
+                <span id="timer-display" class="badge-timer">⏱️ 00:00</span>
+            </div>
+
+            <div class="q-meta">
+                <span class="badge" id="q-materia">Matéria</span>
+                <span class="badge" id="q-banca">Banca</span>
+                <span class="badge" id="q-concurso">Concurso</span>
+                <span class="badge" id="q-topico">Tópico</span>
+            </div>
+
+            <div class="q-text" id="q-enunciado">
+                Texto do enunciado...
+            </div>
+
+            <div class="options-group">
+                <button class="btn-opt certo" onclick="responder('C')">CERTO</button>
+                <button class="btn-opt errado" onclick="responder('E')">ERRADO</button>
+            </div>
+
+            <div id="q-explicacao" class="explanation">
+                <strong id="exp-status"></strong>
+                <p id="exp-texto" style="margin-top: 6px; font-size: 0.9rem; line-height: 1.5;"></p>
+                <button class="btn-action" style="margin-top: 12px;" onclick="proximaQuestao()">Próxima Questão ➔</button>
+            </div>
+        </div>
+
+        <div id="simulado-fim" style="display: none; text-align: center; padding: 20px 0;">
+            <h2>Simulado Concluído! 🎉</h2>
+            <div style="font-size: 2.2rem; font-weight: bold; margin: 20px 0; color: #38bdf8;" id="resultado-score">0 / 0</div>
+            <p style="color: var(--text-secondary);" id="resultado-detalhes"></p>
+            <p style="color: var(--text-secondary); margin-top: 8px;" id="resultado-tempo"></p>
+            
+            <div style="margin-top: 25px; display: flex; gap: 10px; justify-content: center; flex-direction: column;">
+                <button id="btn-revisar-erros" class="btn-action" style="background-color: var(--warning); color: #0f172a; font-weight: bold; display: none;" onclick="refazerErrosSimulado()">
+                    🔁 Refazer Apenas as Questões Incorretas
+                </button>
+                <button class="btn-action" onclick="resetSimulado()">Novo Simulado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB INTEGRADO: BUSCAR REVISÃO DO LARAVEL -->
+    <div id="tab-laravel" class="tab-content">
+        <h2 style="margin-bottom: 10px; font-size: 1.2rem; color: #38bdf8;">🔄 Carregar Questões Pendentes de Revisão</h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
+            Essa opção executa a consulta de questões marcadas com <code>needs_review = true</code> diretamente da API Laravel.
+        </p>
+        <button class="btn-action" onclick="carregarRevisaoLaravel()">Buscar Questões de Revisão no Backend</button>
+        <div id="laravel-loading" style="display:none; margin-top: 15px; color: var(--warning);">Carregando questões do banco de dados...</div>
+    </div>
+
+    <!-- TAB 2: CADASTRAR -->
+    <div id="tab-cadastrar" class="tab-content">
+        <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Cadastrar Nova Questão</h2>
+        <form id="form-cadastro" onsubmit="salvarQuestaoManual(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Matéria</label>
+                    <input type="text" id="cad-materia" placeholder="Ex: Raciocínio Lógico" required>
+                </div>
+                <div class="form-group">
+                    <label>Banca</label>
+                    <input type="text" id="cad-banca" placeholder="Ex: CEBRASPE" required>
+                </div>
+                <div class="form-group">
+                    <label>Concurso</label>
+                    <input type="text" id="cad-concurso" placeholder="Ex: PM PI" required>
+                </div>
+                <div class="form-group">
+                    <label>Tópico</label>
+                    <input type="text" id="cad-topico" placeholder="Ex: Leis de De Morgan" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Enunciado da Questão</label>
+                <textarea id="cad-enunciado" rows="4" placeholder="Digite a afirmação da questão..." required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gabarito</label>
+                    <select id="cad-gabarito" required>
+                        <option value="C">CERTO</option>
+                        <option value="E">ERRADO</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Explicação / Comentário do Gabarito</label>
+                <textarea id="cad-explicacao" rows="3" placeholder="Explicação detalhada..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-action">Salvar Questão</button>
+        </form>
+    </div>
+
+    <!-- TAB 3: IMPORTAR & BACKUP -->
+    <div id="tab-importar" class="tab-content">
+        <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Importação em Lote (JSON)</h2>
+        <textarea id="lote-json" rows="8" placeholder='[{"materia":"Língua Portuguesa","banca":"CEBRASPE","concurso":"PM PI","topico":"Crase","enunciado":"...","gabarito":"C","explicacao":"..."}]'></textarea>
+        <button class="btn-action" style="margin-top: 10px;" onclick="importarLoteJSON()">Importar JSON de Questões</button>
+
+        <div class="backup-box">
+            <h3>💾 Backup & Restauração Completa do Banco</h3>
+            <div class="backup-btns">
+                <button class="btn-export" onclick="exportarBackupJSON()">📥 Baixar Backup (.json)</button>
+                <button class="btn-import" onclick="document.getElementById('input-file-backup').click()">📤 Carregar Backup (.json)</button>
+                <input type="file" id="input-file-backup" style="display: none;" accept=".json" onchange="restaurarBackupJSON(event)">
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: CADERNO DE ERROS -->
+    <div id="tab-erros" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap;">
+            <h2 style="font-size: 1.2rem;">Caderno de Erros</h2>
+            <button class="btn-danger" id="btn-limpar-erros" onclick="limparTodoCadernoErros()">🗑️ Limpar Erros</button>
+        </div>
+        <div id="lista-erros"></div>
+    </div>
+
+    <!-- TAB 5: GERENCIAR BANCO -->
+    <div id="tab-gerenciar" class="tab-content">
+        <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Banco de Questões Cadastradas</h2>
+        <div class="table-responsive">
+            <table class="table-list">
+                <thead>
+                    <tr>
+                        <th>Matéria</th>
+                        <th>Banca</th>
+                        <th>Tópico</th>
+                        <th>Gab.</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-banco"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE EDIÇÃO -->
+<div id="modal-editar" class="modal-edit">
+    <div class="modal-content">
+        <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: #38bdf8;">Editar Questão</h2>
+        <form id="form-edicao" onsubmit="salvarEdicaoQuestao(event)">
+            <input type="hidden" id="edit-id">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Matéria</label>
+                    <input type="text" id="edit-materia" required>
+                </div>
+                <div class="form-group">
+                    <label>Banca</label>
+                    <input type="text" id="edit-banca" required>
+                </div>
+                <div class="form-group">
+                    <label>Concurso</label>
+                    <input type="text" id="edit-concurso" required>
+                </div>
+                <div class="form-group">
+                    <label>Tópico</label>
+                    <input type="text" id="edit-topico" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Enunciado da Questão</label>
+                <textarea id="edit-enunciado" rows="4" required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gabarito</label>
+                    <select id="edit-gabarito" required>
+                        <option value="C">CERTO</option>
+                        <option value="E">ERRADO</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Explicação / Comentário do Gabarito</label>
+                <textarea id="edit-explicacao" rows="3" required></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; flex-wrap: wrap;">
+                <button type="button" class="btn-danger" style="flex: 1;" onclick="fecharModalEdicao()">Cancelar</button>
+                <button type="submit" class="btn-action" style="flex: 1;">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="questoes.js"></script>
+
+<script>
+    let usarRegraCebraspe = true;
+
+    function setRegraCebraspe(ativado) {
+        usarRegraCebraspe = ativado;
+        const btnSim = document.getElementById('btn-cebraspe-sim');
+        const btnNao = document.getElementById('btn-cebraspe-nao');
+
+        if (ativado) {
+            btnSim.classList.add('active');
+            btnNao.classList.remove('active');
+        } else {
+            btnNao.classList.add('active');
+            btnSim.classList.remove('active');
+        }
+    }
+
+    function switchTab(evt, tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        if (evt && evt.currentTarget) {
+            evt.currentTarget.classList.add('active');
+        }
+        
+        const targetTab = document.getElementById('tab-' + tabId);
+        if (targetTab) {
+            targetTab.classList.add('active');
+        }
+
+        if(tabId === 'simulado') popularFiltrosSimulado();
+        if(tabId === 'erros') renderizarErros();
+        if(tabId === 'gerenciar') renderizarBanco();
+    }
+
+    let questoes = [];
+    let cadernoErros = [];
+
+    try {
+        const localData = localStorage.getItem('sim_questoes');
+        if (localData) {
+            questoes = JSON.parse(localData);
+        } else if (typeof bancoInicial !== 'undefined') {
+            questoes = bancoInicial;
+        } else {
+            questoes = [];
+        }
+        cadernoErros = JSON.parse(localStorage.getItem('sim_erros')) || [];
+    } catch(e) {
+        questoes = (typeof bancoInicial !== 'undefined') ? bancoInicial : [];
+        cadernoErros = [];
+    }
+
+    let simuladoAtual = [];
+    let questoesErradasSimuladoAtual = [];
+    let idxAtual = 0;
+    let acertos = 0;
+    let erros = 0;
+
+    let timerInterval = null;
+    let tempoTotalSegundos = 0;
+    let tempoRestanteSegundos = 0;
+    let tempoDecorridoSegundos = 0;
+
+    function salvarDados() {
+        localStorage.setItem('sim_questoes', JSON.stringify(questoes));
+        localStorage.setItem('sim_erros', JSON.stringify(cadernoErros));
+        atualizarContadores();
+    }
+
+    function atualizarContadores() {
+        const cBanco = document.getElementById('count-banco');
+        const cErros = document.getElementById('count-erros');
+        if(cBanco) cBanco.innerText = questoes.length;
+        if(cErros) cErros.innerText = cadernoErros.length;
+    }
+
+    function popularFiltrosSimulado() {
+        const selMat = document.getElementById('sim-materia');
+        if (!selMat) return;
+        const materias = [...new Set(questoes.map(q => q.materia))];
+        
+        selMat.innerHTML = '<option value="TODAS">Todas as Matérias</option>';
+        materias.forEach(m => {
+            selMat.innerHTML += `<option value="${m}">${m}</option>`;
+        });
+        popularTopicosSimulado();
+    }
+
+    function popularTopicosSimulado() {
+        const selMat = document.getElementById('sim-materia');
+        const selTop = document.getElementById('sim-topico');
+        if (!selMat || !selTop) return;
+
+        const mat = selMat.value;
+        let qFiltradas = questoes;
+        if(mat !== 'TODAS') {
+            qFiltradas = questoes.filter(q => q.materia === mat);
+        }
+
+        const topicos = [...new Set(qFiltradas.map(q => q.topico))];
+        selTop.innerHTML = '<option value="TODOS">Todos os Tópicos</option>';
+        topicos.forEach(t => {
+            selTop.innerHTML += `<option value="${t}">${t}</option>`;
+        });
+    }
+
+    async function carregarRevisaoLaravel() {
+        const loading = document.getElementById('laravel-loading');
+        loading.style.display = 'block';
+        
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/questions/review');
+            if(!response.ok) throw new Error('Falha ao se conectar com a API');
+            
+            const data = await response.json();
+            if (Array.isArray(data) && data.length > 0) {
+                switchTab(null, 'simulado');
+                iniciarSimulado(data);
+            } else {
+                alert('Nenhuma questão pendente de revisão no banco!');
+            }
+        } catch (err) {
+            alert('Erro ao carregar do Laravel: ' + err.message);
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    function iniciarSimulado(listaEspecifica = null) {
+        let filtradas = [];
+
+        if (listaEspecifica) {
+            filtradas = [...listaEspecifica];
+        } else {
+            const mat = document.getElementById('sim-materia').value;
+            const top = document.getElementById('sim-topico').value;
+            const qtd = parseInt(document.getElementById('sim-qtd').value);
+
+            filtradas = [...questoes];
+            if(mat !== 'TODAS') filtradas = filtradas.filter(q => q.materia === mat);
+            if(top !== 'TODOS') filtradas = filtradas.filter(q => q.topico === top);
+
+            if(filtradas.length === 0) {
+                alert('Nenhuma questão encontrada para este filtro!');
+                return;
+            }
+
+            filtradas.sort(() => Math.random() - 0.5);
+            filtradas = filtradas.slice(0, qtd);
+        }
+
+        const minutosLimite = parseInt(document.getElementById('sim-tempo').value);
+
+        simuladoAtual = filtradas;
+        questoesErradasSimuladoAtual = [];
+        idxAtual = 0;
+        acertos = 0;
+        erros = 0;
+        tempoDecorridoSegundos = 0;
+
+        document.getElementById('simulado-setup').style.display = 'none';
+        document.getElementById('simulado-exec').style.display = 'block';
+        document.getElementById('simulado-fim').style.display = 'none';
+
+        iniciarTimer(minutosLimite);
+        carregarQuestao();
+    }
+
+    function iniciarTimer(minutos) {
+        clearInterval(timerInterval);
+        const timerDisplay = document.getElementById('timer-display');
+
+        if (minutos === 0) {
+            tempoDecorridoSegundos = 0;
+            timerDisplay.innerText = "⏱️ 00:00";
+            timerInterval = setInterval(() => {
+                tempoDecorridoSegundos++;
+                const min = String(Math.floor(tempoDecorridoSegundos / 60)).padStart(2, '0');
+                const seg = String(tempoDecorridoSegundos % 60).padStart(2, '0');
+                timerDisplay.innerText = `⏱️ ${min}:${seg}`;
+            }, 1000);
+        } else {
+            tempoTotalSegundos = minutos * 60;
+            tempoRestanteSegundos = tempoTotalSegundos;
+            
+            const min = String(Math.floor(tempoRestanteSegundos / 60)).padStart(2, '0');
+            const seg = String(tempoRestanteSegundos % 60).padStart(2, '0');
+            timerDisplay.innerText = `⏳ ${min}:${seg}`;
+
+            timerInterval = setInterval(() => {
+                tempoRestanteSegundos--;
+                tempoDecorridoSegundos++;
+
+                const m = String(Math.floor(tempoRestanteSegundos / 60)).padStart(2, '0');
+                const s = String(tempoRestanteSegundos % 60).padStart(2, '0');
+                timerDisplay.innerText = `⏳ ${m}:${s}`;
+
+                if (tempoRestanteSegundos <= 0) {
+                    clearInterval(timerInterval);
+                    alert("⏰ O tempo acabou! O simulado será finalizado.");
+                    finalizarSimulado();
+                }
+            }, 1000);
+        }
+    }
+
+    function carregarQuestao() {
+        const q = simuladoAtual[idxAtual];
+        document.getElementById('progresso-texto').innerText = `Questão ${idxAtual + 1} de ${simuladoAtual.length}`;
+        document.getElementById('q-materia').innerText = q.materia;
+        document.getElementById('q-banca').innerText = q.banca;
+        document.getElementById('q-concurso').innerText = q.concurso;
+        document.getElementById('q-topico').innerText = q.topico;
+        document.getElementById('q-enunciado').innerText = q.enunciado;
+
+        document.getElementById('q-explicacao').style.display = 'none';
+    }
+
+    function responder(opcao) {
+        const q = simuladoAtual[idxAtual];
+        const modo = document.getElementById('sim-modo').value;
+        const correto = opcao === q.gabarito;
+
+        if(correto) {
+            acertos++;
+        } else {
+            erros++;
+            questoesErradasSimuladoAtual.push(q);
+            if(!cadernoErros.some(e => e.id === q.id)) {
+                cadernoErros.push(q);
+                salvarDados();
+            }
+        }
+
+        if(modo === 'treino') {
+            const expDiv = document.getElementById('q-explicacao');
+            const expStatus = document.getElementById('exp-status');
+            const expTexto = document.getElementById('exp-texto');
+
+            expDiv.style.display = 'block';
+            if(correto) {
+                expDiv.className = 'explanation correct';
+                expStatus.innerText = '✅ RESPOSTA CORRETA!';
+                expStatus.style.color = 'var(--success)';
+            } else {
+                expDiv.className = 'explanation wrong';
+                expStatus.innerText = `❌ VOCÊ ERROU. GABARITO: ${q.gabarito === 'C' ? 'CERTO' : 'ERRADO'}`;
+                expStatus.style.color = 'var(--danger)';
+            }
+            expTexto.innerText = q.explicacao;
+        } else {
+            proximaQuestao();
+        }
+    }
+
+    function proximaQuestao() {
+        idxAtual++;
+        if(idxAtual < simuladoAtual.length) {
+            carregarQuestao();
+        } else {
+            finalizarSimulado();
+        }
+    }
+
+    function finalizarSimulado() {
+        clearInterval(timerInterval);
+        document.getElementById('simulado-exec').style.display = 'none';
+        document.getElementById('simulado-fim').style.display = 'block';
+        
+        const totalQuestoes = simuladoAtual.length;
+        
+        let notaLiquida = acertos;
+        if (usarRegraCebraspe) {
+            notaLiquida = acertos - erros;
+            if (notaLiquida < 0) notaLiquida = 0;
+        }
+
+        const pctLiquida = Math.round((notaLiquida / totalQuestoes) * 100);
+        const pctBruta = Math.round((acertos / totalQuestoes) * 100);
+
+        if (usarRegraCebraspe) {
+            document.getElementById('resultado-score').innerText = `Nota Líquida: ${notaLiquida} pts`;
+            document.getElementById('resultado-detalhes').innerText = `Acertos: ${acertos} | Erros: ${erros} | Aproveitamento Líquido: ${pctLiquida}% (Bruto: ${pctBruta}%)`;
+        } else {
+            document.getElementById('resultado-score').innerText = `${acertos} / ${totalQuestoes}`;
+            document.getElementById('resultado-detalhes').innerText = `Aproveitamento: ${pctBruta}% | Erros: ${erros}`;
+        }
+
+        const minUsados = Math.floor(tempoDecorridoSegundos / 60);
+        const segUsados = tempoDecorridoSegundos % 60;
+        document.getElementById('resultado-tempo').innerText = `⏱️ Tempo total utilizado: ${minUsados}m ${segUsados}s`;
+
+        const btnRevisar = document.getElementById('btn-revisar-erros');
+        if (questoesErradasSimuladoAtual.length > 0) {
+            btnRevisar.style.display = 'block';
+            btnRevisar.innerText = `🔁 Refazer Apenas as ${questoesErradasSimuladoAtual.length} Questões Que Errei`;
+        } else {
+            btnRevisar.style.display = 'none';
+        }
+    }
+
+    function refazerErrosSimulado() {
+        if (questoesErradasSimuladoAtual.length > 0) {
+            iniciarSimulado(questoesErradasSimuladoAtual);
+        }
+    }
+
+    function resetSimulado() {
+        clearInterval(timerInterval);
+        document.getElementById('simulado-setup').style.display = 'block';
+        document.getElementById('simulado-fim').style.display = 'none';
+    }
+
+    function salvarQuestaoManual(e) {
+        e.preventDefault();
+        const novaQ = {
+            id: Date.now(),
+            materia: document.getElementById('cad-materia').value,
+            banca: document.getElementById('cad-banca').value,
+            concurso: document.getElementById('cad-concurso').value,
+            topico: document.getElementById('cad-topico').value,
+            enunciado: document.getElementById('cad-enunciado').value,
+            gabarito: document.getElementById('cad-gabarito').value,
+            explicacao: document.getElementById('cad-explicacao').value
+        };
+
+        questoes.push(novaQ);
+        salvarDados();
+        document.getElementById('form-cadastro').reset();
+        alert('Questão cadastrada com sucesso!');
+    }
+
+    function importarLoteJSON() {
+        const raw = document.getElementById('lote-json').value;
+        try {
+            const arr = JSON.parse(raw);
+            if(Array.isArray(arr)) {
+                arr.forEach((q, idx) => {
+                    if(!q.id) q.id = Date.now() + idx;
+                    questoes.push(q);
+                });
+                salvarDados();
+                alert(`${arr.length} questões importadas!`);
+                document.getElementById('lote-json').value = '';
+            } else {
+                alert('O JSON deve ser um Array [...]');
+            }
+        } catch(err) {
+            alert('Erro no JSON: ' + err.message);
+        }
+    }
+
+    function exportarBackupJSON() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questoes, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `banco_questoes_backup_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function restaurarBackupJSON(event) {
+        const fileReader = new FileReader();
+        fileReader.onload = function(e) {
+            try {
+                const parsedData = JSON.parse(e.target.result);
+                if(Array.isArray(parsedData)) {
+                    questoes = parsedData;
+                    salvarDados();
+                    alert(`${parsedData.length} questões carregadas!`);
+                } else {
+                    alert('Arquivo de backup inválido.');
+                }
+            } catch(err) {
+                alert('Arquivo de backup inválido.');
+            }
+        };
+        fileReader.readAsText(event.target.files[0]);
+    }
+
+    function renderizarErros() {
+        const div = document.getElementById('lista-erros');
+        if(!div) return;
+        if(cadernoErros.length === 0) {
+            div.innerHTML = '<p style="color: var(--text-secondary);">Seu caderno de erros está vazio!</p>';
+            return;
+        }
+
+        let html = '';
+        cadernoErros.forEach((q) => {
+            html += `
+                <div style="background-color: #0f172a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--danger);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 8px; flex-wrap:wrap; gap:5px;">
+                        <span class="badge" style="background:#451a1a; color:#f87171;">${q.materia} - ${q.topico}</span>
+                        <button class="btn-danger" onclick="removerErro(${q.id})">Remover</button>
+                    </div>
+                    <p style="font-size: 0.95rem; margin-bottom: 10px;">${q.enunciado}</p>
+                    <p style="font-size: 0.85rem; color: #a7f3d0;"><strong>Gabarito:</strong> ${q.gabarito === 'C' ? 'CERTO' : 'ERRADO'}</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px;"><em>${q.explicacao}</em></p>
+                </div>
+            `;
+        });
+        div.innerHTML = html;
+    }
+
+    function removerErro(id) {
+        cadernoErros = cadernoErros.filter(q => q.id !== id);
+        salvarDados();
+        renderizarErros();
+    }
+
+    function limparTodoCadernoErros() {
+        if(confirm('Tem certeza que deseja limpar todo o seu Caderno de Erros?')) {
+            cadernoErros = [];
+            salvarDados();
+            renderizarErros();
+        }
+    }
+
+    function renderizarBanco() {
+        const tbody = document.getElementById('tabela-banco');
+        if(!tbody) return;
+        let html = '';
+        questoes.forEach(q => {
+            html += `
+                <tr>
+                    <td>${q.materia}</td>
+                    <td>${q.banca}</td>
+                    <td>${q.topico}</td>
+                    <td><strong style="color: ${q.gabarito === 'C' ? 'var(--success)' : 'var(--danger)'}">${q.gabarito}</strong></td>
+                    <td>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn-warning" onclick="abrirModalEdicao(${q.id})">Editar</button>
+                            <button class="btn-danger" onclick="excluirQuestao(${q.id})">Excluir</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function abrirModalEdicao(id) {
+        const q = questoes.find(item => item.id === id);
+        if(!q) return;
+
+        document.getElementById('edit-id').value = q.id;
+        document.getElementById('edit-materia').value = q.materia;
+        document.getElementById('edit-banca').value = q.banca;
+        document.getElementById('edit-concurso').value = q.concurso;
+        document.getElementById('edit-topico').value = q.topico;
+        document.getElementById('edit-enunciado').value = q.enunciado;
+        document.getElementById('edit-gabarito').value = q.gabarito;
+        document.getElementById('edit-explicacao').value = q.explicacao;
+
+        document.getElementById('modal-editar').style.display = 'flex';
+    }
+
+    function fecharModalEdicao() {
+        document.getElementById('modal-editar').style.display = 'none';
+    }
+
+    function salvarEdicaoQuestao(e) {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('edit-id').value);
+        const idx = questoes.findIndex(q => q.id === id);
+
+        if(idx !== -1) {
+            questoes[idx] = {
+                id: id,
+                materia: document.getElementById('edit-materia').value,
+                banca: document.getElementById('edit-banca').value,
+                concurso: document.getElementById('edit-concurso').value,
+                topico: document.getElementById('edit-topico').value,
+                enunciado: document.getElementById('edit-enunciado').value,
+                gabarito: document.getElementById('edit-gabarito').value,
+                explicacao: document.getElementById('edit-explicacao').value
+            };
+
+            salvarDados();
+            fecharModalEdicao();
+            renderizarBanco();
+            alert('Questão atualizada com sucesso!');
+        }
+    }
+
+    function excluirQuestao(id) {
+        if(confirm('Tem certeza que deseja excluir esta questão?')) {
+            questoes = questoes.filter(q => q.id !== id);
+            cadernoErros = cadernoErros.filter(q => q.id !== id);
+            salvarDados();
+            renderizarBanco();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        atualizarContadores();
+        popularFiltrosSimulado();
+    });
+</script>
+</body>
+</html>
