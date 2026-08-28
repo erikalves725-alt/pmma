@@ -399,12 +399,11 @@
 <div class="container">
     <header>
         <h1>⚡ Simulado Pro - Concursos Públicos</h1>
-        <p>Estilo Cebraspe (Certo / Errado) | Gerenciamento Completo & Integrado com Laravel</p>
+        <p>Estilo Cebraspe (Certo / Errado) | Gerenciamento Completo</p>
     </header>
 
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab(event, 'simulado')">📝 Simulado / Praticar</button>
-        <button class="tab-btn" onclick="switchTab(event, 'laravel')">🔄 Revisão DB (Laravel)</button>
         <button class="tab-btn" onclick="switchTab(event, 'cadastrar')">➕ Cadastrar Questão</button>
         <button class="tab-btn" onclick="switchTab(event, 'importar')">📥 Lote & Backup (.JSON)</button>
         <button class="tab-btn" onclick="switchTab(event, 'erros')">📕 Caderno de Erros (<span id="count-erros">0</span>)</button>
@@ -514,22 +513,15 @@
                 <button id="btn-revisar-erros" class="btn-action" style="background-color: var(--warning); color: #0f172a; font-weight: bold; display: none;" onclick="refazerErrosSimulado()">
                     🔁 Refazer Apenas as Questões Incorretas
                 </button>
+                <button id="btn-erros-restantes" class="btn-action" style="background-color: var(--warning); color: #0f172a; font-weight: bold; display: none;" onclick="iniciarRevisaoErros()">
+                    🔁 Refazer as Questões que Ainda Errei
+                </button>
                 <button class="btn-action" onclick="resetSimulado()">Novo Simulado</button>
             </div>
         </div>
     </div>
 
-    <!-- TAB INTEGRADO: BUSCAR REVISÃO DO LARAVEL -->
-    <div id="tab-laravel" class="tab-content">
-        <h2 style="margin-bottom: 10px; font-size: 1.2rem; color: #38bdf8;">🔄 Carregar Questões Pendentes de Revisão</h2>
-        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
-            Essa opção executa a consulta de questões marcadas com <code>needs_review = true</code> diretamente da API Laravel.
-        </p>
-        <button class="btn-action" onclick="carregarRevisaoLaravel()">Buscar Questões de Revisão no Backend</button>
-        <div id="laravel-loading" style="display:none; margin-top: 15px; color: var(--warning);">Carregando questões do banco de dados...</div>
-    </div>
-
-    <!-- TAB 2: CADASTRAR -->
+    <!-- TAB: CADASTRAR -->
     <div id="tab-cadastrar" class="tab-content">
         <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Cadastrar Nova Questão</h2>
         <form id="form-cadastro" onsubmit="salvarQuestaoManual(event)">
@@ -576,7 +568,7 @@
         </form>
     </div>
 
-    <!-- TAB 3: IMPORTAR & BACKUP -->
+    <!-- TAB: IMPORTAR & BACKUP -->
     <div id="tab-importar" class="tab-content">
         <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Importação em Lote (JSON)</h2>
         <textarea id="lote-json" rows="8" placeholder='[{"materia":"Língua Portuguesa","banca":"CEBRASPE","concurso":"PM PI","topico":"Crase","enunciado":"...","gabarito":"C","explicacao":"..."}]'></textarea>
@@ -592,16 +584,21 @@
         </div>
     </div>
 
-    <!-- TAB 4: CADERNO DE ERROS -->
+    <!-- TAB: CADERNO DE ERROS -->
     <div id="tab-erros" class="tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap;">
             <h2 style="font-size: 1.2rem;">Caderno de Erros</h2>
-            <button class="btn-danger" id="btn-limpar-erros" onclick="limparTodoCadernoErros()">🗑️ Limpar Erros</button>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-action" style="width:auto; background-color:var(--warning); color:#0f172a;" onclick="iniciarRevisaoErros()">
+                    🔁 Refazer Todas as Questões Erradas
+                </button>
+                <button class="btn-danger" id="btn-limpar-erros" onclick="limparTodoCadernoErros()">🗑️ Limpar Erros</button>
+            </div>
         </div>
         <div id="lista-erros"></div>
     </div>
 
-    <!-- TAB 5: GERENCIAR BANCO -->
+    <!-- TAB: GERENCIAR BANCO -->
     <div id="tab-gerenciar" class="tab-content">
         <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Banco de Questões Cadastradas</h2>
         <div class="table-responsive">
@@ -731,6 +728,7 @@
 
     let simuladoAtual = [];
     let questoesErradasSimuladoAtual = [];
+    let modoRevisaoErros = false;
     let idxAtual = 0;
     let acertos = 0;
     let erros = 0;
@@ -783,29 +781,18 @@
         });
     }
 
-    async function carregarRevisaoLaravel() {
-        const loading = document.getElementById('laravel-loading');
-        loading.style.display = 'block';
-        
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/questions/review');
-            if(!response.ok) throw new Error('Falha ao se conectar com a API');
-            
-            const data = await response.json();
-            if (Array.isArray(data) && data.length > 0) {
-                switchTab(null, 'simulado');
-                iniciarSimulado(data);
-            } else {
-                alert('Nenhuma questão pendente de revisão no banco!');
-            }
-        } catch (err) {
-            alert('Erro ao carregar do Laravel: ' + err.message);
-        } finally {
-            loading.style.display = 'none';
+    function iniciarRevisaoErros() {
+        if (cadernoErros.length === 0) {
+            alert('Seu Caderno de Erros está vazio! Você ainda não tem questões erradas para revisar.');
+            return;
         }
+
+        switchTab(null, 'simulado');
+        iniciarSimulado([...cadernoErros], true);
     }
 
-    function iniciarSimulado(listaEspecifica = null) {
+    function iniciarSimulado(listaEspecifica = null, revisaoErros = false) {
+        modoRevisaoErros = revisaoErros;
         let filtradas = [];
 
         if (listaEspecifica) {
@@ -902,10 +889,18 @@
 
         if(correto) {
             acertos++;
+
+            // Na revisão do Caderno de Erros, acertou = sai do caderno.
+            if (modoRevisaoErros) {
+                cadernoErros = cadernoErros.filter(e => e.id !== q.id);
+                salvarDados();
+            }
         } else {
             erros++;
             questoesErradasSimuladoAtual.push(q);
-            if(!cadernoErros.some(e => e.id === q.id)) {
+
+            // Em uma revisão, a questão permanece no Caderno de Erros.
+            if(!modoRevisaoErros && !cadernoErros.some(e => e.id === q.id)) {
                 cadernoErros.push(q);
                 salvarDados();
             }
@@ -970,11 +965,30 @@
         document.getElementById('resultado-tempo').innerText = `⏱️ Tempo total utilizado: ${minUsados}m ${segUsados}s`;
 
         const btnRevisar = document.getElementById('btn-revisar-erros');
-        if (questoesErradasSimuladoAtual.length > 0) {
-            btnRevisar.style.display = 'block';
-            btnRevisar.innerText = `🔁 Refazer Apenas as ${questoesErradasSimuladoAtual.length} Questões Que Errei`;
-        } else {
+        const btnErrosRestantes = document.getElementById('btn-erros-restantes');
+
+        if (modoRevisaoErros) {
             btnRevisar.style.display = 'none';
+
+            if (cadernoErros.length > 0) {
+                btnErrosRestantes.style.display = 'block';
+                btnErrosRestantes.innerText = `🔁 Refazer as ${cadernoErros.length} Questões que Ainda Errei`;
+                document.getElementById('resultado-detalhes').innerText +=
+                    ` | Ainda faltam ${cadernoErros.length} questão(ões) no Caderno de Erros.`;
+            } else {
+                btnErrosRestantes.style.display = 'none';
+                document.getElementById('resultado-detalhes').innerText +=
+                    ' | 🎉 Você acertou todas as questões do Caderno de Erros!';
+            }
+        } else {
+            btnErrosRestantes.style.display = 'none';
+
+            if (questoesErradasSimuladoAtual.length > 0) {
+                btnRevisar.style.display = 'block';
+                btnRevisar.innerText = `🔁 Refazer Apenas as ${questoesErradasSimuladoAtual.length} Questões Que Errei`;
+            } else {
+                btnRevisar.style.display = 'none';
+            }
         }
     }
 
@@ -986,6 +1000,7 @@
 
     function resetSimulado() {
         clearInterval(timerInterval);
+        modoRevisaoErros = false;
         document.getElementById('simulado-setup').style.display = 'block';
         document.getElementById('simulado-fim').style.display = 'none';
     }
